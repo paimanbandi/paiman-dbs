@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql
+    container_name: c-mysql
+    restart: always
+    command: mysqld --sql_mode="" --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: 'paiman'
+      MYSQL_USER: 'paiman'
+      MYSQL_PASSWORD: 'paiman'
+      MYSQL_ROOT_PASSWORD: 'paiman'
+      TZ: Asia/Jakarta
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - v-mysql:/var/lib/mysql
+    networks:
+      - n-mysql
+  mongo:
+    image: 'mongo'
+    container_name: 'c-mongo'
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=paiman
+      - MONGO_INITDB_ROOT_USERNAME=paiman
+      - MONGO_INITDB_ROOT_PASSWORD=paiman
+    ports:
+      - '27017-27019:27017-27019'
+    volumes:
+      - v-mongo:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro   
+    networks:
+      - n-mongo
+volumes:
+  v-mysql:
+    name: v-mysql
+  v-mongo:
+    name: v-mongo
+networks:
+  n-mysql:
+    name: n-mysql
+  n-mongo:
+    name: n-mongo
+
